@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset = "utf-8">
+      <title>Final Project</title>
+	  <style>
+	  body
+		{background-image:url("background.gif");
+		background-size:cover;}
+		
+	  button#Button
+		 {position:absolute;
+		  top:405px;
+		  left:165px;
+		  z-index:2;
+		  border-radius :300px;}
+		  
+	  div#Show
+		 {position:absolute;
+		  width:500px;
+		  height:90px;
+		  top:275px;
+		  left:158px;
+		  font-size:50px;
+		  font-family:標楷體;
+		  z-index:1;}
+		  
+	  div#ball-falling
+		 {position:absolute;
+		  width:225px;
+		  height:265px;
+		  top:385px;
+		  left:430px;
+		  overflow: hidden;}
+		  
+	  div#paperArea
+	     {position:absolute;
+		  width:550px;
+		  height:650px;
+		  top:70px;
+		  left:910px;}
+		  
+      img#paper
+	     {position:absolute;
+		  width:550px;
+		  height:650px;
+		  top:30px;
+		  left:800px;}
+	  
+	  img#pic1
+		{position:absolute;
+		 width:825px;
+		 height:700px;
+		 z-index:1;}
+		
+	  img#ball
+		{position:absolute;
+		 width:125px;
+		 height:125px;
+		 top:-500px;
+		 left:50px;
+		 z-index:2;}
+		 
+	  img#paper
+		{position:absolute;
+		 width: 550px;
+		 height:650px;
+		 transition: opacity 3s;
+    	-webkit-transition: opacity 3s;
+		 }
+	  .solid{opacity:1;}
+	  .transparent{opacity:0;}
+	  
+	   input#submit{
+		position:absolute;
+		top:15px;
+		left:400px;
+		width: 75px;
+		height: 55px;
+		z-index:2;
+		border-radius :300px;
+		border:3px black solid;
+		background-color:grey;
+		font-family:fantasy;
+		font-size:20px;
+	  }
+	  
+	  input#name{
+		position:absolute;
+		top:35px;
+		left:325px;
+		width:60px;
+		height:30px;
+		background-color:#FFBB66;
+		font-size:15px;
+	  }
+	  input#comment{
+		position:absolute;
+		top:15px;
+		left:10px;
+		width:300px;
+		height:50px;	
+		background-color:#FFBB66;
+		font-size:30px;
+	  }
+	  p#by{
+		position: absolute;
+		top:-3px;
+		left:325px;
+		font-size:17px;
+		font-weight:bold;
+		}
+	  
+	  </style>
+	  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+	  <script>
+	  function start()
+	  {
+		var button = document.getElementById( "Button" );
+		button.addEventListener("click",setImage,false);
+		image = document.getElementById("pic1");
+	  }
+	  function setImage()
+	  {
+		var timesRun = 0;
+	    var value = Math.floor(1+Math.random() * 3);
+		//動態轉蛋機
+		var interval = setInterval(function(){
+			var Random = Math.floor( 1 + Math.random() * 3 );
+			image.setAttribute( "src", "pic" + Random + ".png" );
+			timesRun+=1;
+			if(timesRun == 20){
+				image.setAttribute( "src", "pic" + value + ".png" );	
+				clearInterval(interval);
+				ball_move();
+			}
+			},80);
+	  }
+	  function ball_move()
+	  {
+		var y = -375;
+		var timesRun = 0;
+		var ball = document.getElementById("ball");
+		var interval = setInterval(function(){
+			ball.style.top = y + "px";
+			y = y + 10;
+			timesRun+=1;
+			if(timesRun > 50){
+				clearInterval(interval);
+				paper_show();
+			}
+		},20);
+	  }
+	  function paper_show()
+	  {
+		var paper = document.getElementById("paper");
+		paper.className = "solid";
+		output_egg();
+	  }
+	  function output_egg()
+	{
+	    $.ajax({
+		url: "1061541.php",
+		type: "POST",
+		datatype: "html",
+	        success: function( output ) {
+		   document.getElementById( "paperArea" ).innerHTML = output;
+	        },
+		error : function(){
+		    alert( "Request failed." );
+		}
+	    });
+	}
+	 function input_eggs()
+	{
+		var comment = document.getElementById("comment").value;
+		var name = document.getElementById("name").value;
+	    $.ajax({
+		url: "1061541_input.php",
+		type: "POST",
+		data: {
+		   comment:comment,
+		   name:name
+		   },
+		datatype: "html",
+	        success: function() {
+			alert( "輸入成功" );
+		   document.getElementById("name").value="tim";
+		   document.getElementById("comment").value="Hellow!!";
+	        },
+		error : function(){
+		    alert( "Request failed." );
+		}
+	    });
+	}
+	  window.addEventListener( "load", start, false );
+	  </script>
+   </head>
+   <body>
+	<form action="#"> 
+		<button id = "Button"
+		style = "height:175px; width:200px;border:5px black solid;background-color:grey;font-size:40px;font-family:fantasy;">
+			Click Me!
+		</button>
+		<img id = "pic1" src="pic1.png"> 	
+		<div id = "Show">
+			<input id = "comment" type ="text" value = "Hellow!!">
+			<p id = "by">by<p>
+			<input id = "name" type="text" value = "tim">
+			<input id = "submit" type = "button" value = "Submit" onclick="input_eggs();">
+		</div>
+		<div id = "ball-falling">
+			<img id = "ball" src = "ball.png">
+		</div>	
+		<img id = "paper" src = "paper.png" class = "transparent" >
+		<div id = "paperArea">
+		</div>
+	</form> 
+   </body>
+</html>
